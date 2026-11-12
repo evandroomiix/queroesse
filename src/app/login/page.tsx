@@ -6,29 +6,48 @@ import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { loginWithGoogle } from '@/lib/storage';
-import { Gift, Sparkles, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { Gift, Sparkles, CheckCircle2, ShieldCheck, ArrowRight, User } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [googleNotice, setGoogleNotice] = useState(false);
 
-  const handleGoogleAuth = () => {
+  const handleRealGoogleOAuth = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      loginWithGoogle();
-      router.push('/');
-    }, 400);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+        },
+      });
+
+      if (error) {
+        console.warn('Google Provider no Supabase:', error.message);
+        setGoogleNotice(true);
+        setIsLoading(false);
+      }
+    } catch {
+      setGoogleNotice(true);
+      setIsLoading(false);
+    }
   };
 
-  const handleEmailAuth = (e: React.FormEvent) => {
+  const handleInstantEvandro = () => {
+    loginWithGoogle('Evandro Magno', 'evandroomiix.lc@gmail.com');
+    router.push('/');
+  };
+
+  const handleCustomLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!name.trim()) return;
     setIsLoading(true);
-    setTimeout(() => {
-      loginWithGoogle(email.split('@')[0], email);
-      router.push('/');
-    }, 400);
+    loginWithGoogle(name.trim(), email.trim() || `${name.toLowerCase().replace(/\s+/g, '')}@gmail.com`);
+    router.push('/');
   };
 
   return (
@@ -47,13 +66,35 @@ export default function LoginPage() {
             </p>
           </div>
 
+          {/* Botão de Acesso Rápido com seu perfil */}
+          <button
+            onClick={handleInstantEvandro}
+            className="w-full p-3.5 rounded-2xl bg-rose-50 hover:bg-rose-100/80 border border-rose-200 flex items-center justify-between text-left transition-all group shadow-2xs"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-rose-500 text-white font-extrabold flex items-center justify-center shadow-xs">
+                E
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-rose-600 uppercase tracking-wider block">
+                  Acesso Rápido Imediato
+                </span>
+                <span className="text-sm font-extrabold text-slate-900">
+                  Entrar como Evandro Magno
+                </span>
+                <span className="text-xs text-slate-500 block">evandroomiix.lc@gmail.com</span>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-rose-600 group-hover:translate-x-1 transition-transform" />
+          </button>
+
           {/* Botão Google Login */}
           <button
-            onClick={handleGoogleAuth}
+            onClick={handleRealGoogleOAuth}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-2xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm shadow-2xs transition-all hover:scale-101 active:scale-98"
+            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-2xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider shadow-2xs transition-all hover:scale-101 active:scale-98"
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -71,23 +112,42 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span>Continuar com o Google</span>
+            <span>Conectar via Conta Google</span>
           </button>
+
+          {googleNotice && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 leading-relaxed">
+              <strong>Aviso:</strong> O provedor Google no Supabase ainda não foi ativado com o Client ID no Google Cloud. Clique no botão <strong>Acesso Rápido</strong> acima para entrar imediatamente!
+            </div>
+          )}
 
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-slate-200"></div>
-            <span className="text-[11px] font-bold text-slate-400 uppercase">ou com seu e-mail</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase">ou informe outro nome</span>
             <div className="flex-1 h-px bg-slate-200"></div>
           </div>
 
-          <form onSubmit={handleEmailAuth} className="space-y-3">
+          <form onSubmit={handleCustomLogin} className="space-y-3">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                E-mail
+                Seu Nome *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="Ex: Carlos Eduardo"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-rose-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                E-mail (Opcional)
               </label>
               <input
                 type="email"
-                required
                 placeholder="seuemail@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -100,7 +160,7 @@ export default function LoginPage() {
               disabled={isLoading}
               className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition-all"
             >
-              Entrar ou Criar Conta
+              Entrar como Anfitrião
             </button>
           </form>
 

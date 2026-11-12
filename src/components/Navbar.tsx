@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Gift, PlusCircle, User, Sparkles, LogOut, CheckCircle2 } from 'lucide-react';
 import { getCurrentUser, loginWithGoogle, logout } from '@/lib/storage';
+import LoginModal from './LoginModal';
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   useEffect(() => {
     setUser(getCurrentUser());
@@ -17,8 +19,7 @@ export default function Navbar() {
   }, []);
 
   const handleQuickGoogleLogin = () => {
-    const u = loginWithGoogle();
-    setUser(u);
+    setLoginModalOpen(true);
   };
 
   const handleLogout = () => {
@@ -143,6 +144,12 @@ export default function Navbar() {
           )}
         </div>
       </div>
+
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+        onSuccess={(u) => setUser(u)}
+      />
     </header>
   );
 }
