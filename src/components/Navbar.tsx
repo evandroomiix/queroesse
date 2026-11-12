@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Gift, PlusCircle, User, Sparkles, LogOut, CheckCircle2 } from 'lucide-react';
 import { getCurrentUser, loginWithGoogle, logout } from '@/lib/storage';
+import { supabase } from '@/lib/supabase';
 import LoginModal from './LoginModal';
 
 export default function Navbar() {
@@ -12,18 +13,47 @@ export default function Navbar() {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   useEffect(() => {
+    // 1. Carrega usuário local salvo
     setUser(getCurrentUser());
+
+    // 2. Escuta mudanças na autenticação oficial do Supabase/Google
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        const meta = session.user.user_metadata || {};
+        const realUser = {
+          id: session.user.id,
+          name: meta.full_name || meta.name || session.user.email?.split('@')[0] || 'Usuário',
+          email: session.user.email,
+          avatar: meta.avatar_url || meta.picture,
+          provider: 'google',
+        };
+        localStorage.setItem('queroesse_current_user_v1', JSON.stringify(realUser));
+        setUser(realUser);
+
+        // Limpa o hash longo com o token da URL para ficar elegante e limpo
+        if (typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      }
+    });
+
     const handleAuth = () => setUser(getCurrentUser());
     window.addEventListener('queroesse_auth_updated', handleAuth);
-    return () => window.removeEventListener('queroesse_auth_updated', handleAuth);
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('queroesse_auth_updated', handleAuth);
+    };
   }, []);
 
   const handleQuickGoogleLogin = () => {
     setLoginModalOpen(true);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setUser(null);
   };
 
