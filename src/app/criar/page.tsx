@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ImagePicker from '@/components/ImagePicker';
-import TemplateGalleryPicker from '@/components/TemplateGalleryPicker';
+import LiveThemePreview from '@/components/LiveThemePreview';
 import { EVENT_TEMPLATES, TEMPLATES_LIST, getTemplateById } from '@/lib/templates';
 import { saveEvent } from '@/lib/storage';
 import { EventCategory, EventData, GiftItem, GuestMode, Guest, TemplateId } from '@/types';
@@ -214,11 +214,12 @@ function CreateEventContent() {
               </p>
             </div>
 
-            {/* Seletor de Templates Exclusivos */}
-            <div className="mb-8">
-              <TemplateGalleryPicker
-                selectedId={templateId}
-                onSelect={(tmpl) => {
+            {/* Seletor de Nichos, Modelos e Preview Ao Vivo */}
+            <div className="mb-10 pb-8 border-b border-slate-100">
+              <LiveThemePreview
+                selectedTemplateId={templateId}
+                initialCategory={category}
+                onSelectTemplate={(tmpl) => {
                   setTemplateId(tmpl.id);
                   setCategory(tmpl.category);
                 }}

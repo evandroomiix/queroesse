@@ -1,6 +1,7 @@
 import { EventCategory, EventTemplateConfig, TemplateId } from '@/types';
 
 export const TEMPLATES_LIST: EventTemplateConfig[] = [
+  // ================= CASAMENTO =================
   {
     id: 'casamento-classico',
     category: 'casamento',
@@ -19,13 +20,11 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
     heroEmoji: '💍',
     sampleGifts: [
       {
-        title: 'Jogo de Jantar em Porcelana 30 Peças',
+        title: 'Jogo de Jantar Porcelana 30 Peças',
         category: 'Cozinha & Mesa',
         description: 'Conjunto completo de pratos rasos, fundos, sobremesa e xícaras.',
         totalQuantity: 1,
         price: 489.90,
-        storeName: 'Amazon',
-        storeUrl: 'https://amazon.com.br',
         imageUrl: 'https://images.unsplash.com/photo-1614088445106-9fa52e431665?auto=format&fit=crop&w=600&q=80',
       },
       {
@@ -37,16 +36,6 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
         imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80',
       },
       {
-        title: 'Fritadeira Airfryer Digital 5L',
-        category: 'Eletrodomésticos',
-        description: 'Essencial para a nova rotina do casal.',
-        totalQuantity: 1,
-        price: 399.00,
-        storeName: 'Mercado Livre',
-        storeUrl: 'https://mercadolivre.com.br',
-        imageUrl: 'https://images.unsplash.com/photo-1585515320310-259814833e62?auto=format&fit=crop&w=600&q=80',
-      },
-      {
         title: 'Cota: Jantar Romântico na Lua de Mel',
         category: 'Lua de Mel',
         description: 'Um momento inesquecível a dois durante a nossa viagem.',
@@ -56,7 +45,6 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
       }
     ],
   },
-
   {
     id: 'casamento-boho',
     category: 'casamento',
@@ -92,7 +80,42 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
       }
     ],
   },
+  {
+    id: 'casamento-minimal',
+    category: 'casamento',
+    name: 'Minimalista Editorial All-White',
+    tagline: 'Linhas finas pretas, espaços generosos e sofisticação de revista de moda',
+    badge: '🖤 Clean & Moderno',
+    fontTitle: 'font-cinzel',
+    isDarkTheme: false,
+    bgClass: 'bg-[#ffffff] text-black',
+    heroPattern: 'minimal-grid',
+    primaryColor: '#171717',
+    accentGradient: 'from-slate-100 via-white to-slate-50',
+    cardStyle: 'bg-white border-2 border-black/80 hover:border-black shadow-none hover:shadow-xl rounded-none',
+    buttonStyle: 'bg-black hover:bg-neutral-800 text-white font-bold uppercase tracking-widest rounded-none text-xs',
+    heroEmoji: '🤍',
+    sampleGifts: [
+      {
+        title: 'Cafeteira Italiana Inox Alessi',
+        category: 'Cozinha',
+        description: 'Design premiado para cafés inesquecíveis.',
+        totalQuantity: 1,
+        price: 360.00,
+        imageUrl: 'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&w=600&q=80',
+      },
+      {
+        title: 'Jogo de Taças de Cristal Lapidado',
+        category: 'Mesa & Sala',
+        description: 'Para brindar com máxima elegância.',
+        totalQuantity: 2,
+        price: 220.00,
+        imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80',
+      }
+    ],
+  },
 
+  // ================= ANIVERSÁRIO =================
   {
     id: 'aniversario-neon',
     category: 'aniversario',
@@ -127,7 +150,6 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
       }
     ],
   },
-
   {
     id: 'aniversario-boteco',
     category: 'aniversario',
@@ -162,7 +184,42 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
       }
     ],
   },
+  {
+    id: 'aniversario-sunset',
+    category: 'aniversario',
+    name: 'Sunset Tropical & Pool Party',
+    tagline: 'Cores de pôr do sol, coral, palmeiras e clima festivo de verão',
+    badge: '🍹 Tropical & Solar',
+    fontTitle: 'font-neon',
+    isDarkTheme: false,
+    bgClass: 'bg-gradient-to-b from-orange-50 via-rose-50 to-amber-50 text-slate-900',
+    heroPattern: 'sunset-tropical',
+    primaryColor: '#f97316',
+    accentGradient: 'from-orange-200 via-rose-100 to-amber-100',
+    cardStyle: 'bg-white/90 border border-orange-200 hover:border-orange-400 shadow-sm hover:shadow-xl rounded-3xl',
+    buttonStyle: 'bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 hover:opacity-95 text-white font-extrabold rounded-2xl shadow-md shadow-orange-200',
+    heroEmoji: '🌅',
+    sampleGifts: [
+      {
+        title: 'Caixa de Som Portátil Bluetooth à Prova dÁgua',
+        category: 'Música',
+        description: 'Para animar a piscina e os rolês de fim de semana.',
+        totalQuantity: 1,
+        price: 290.00,
+        imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80',
+      },
+      {
+        title: 'Kit Drinks & Coqueteleira Inox',
+        category: 'Bebidas',
+        description: 'Para preparar os melhores coquetéis para os convidados.',
+        totalQuantity: 1,
+        price: 140.00,
+        imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80',
+      }
+    ],
+  },
 
+  // ================= CHÁ DE BEBÊ =================
   {
     id: 'cha-bebe-nuvem',
     category: 'cha-de-bebe',
@@ -185,7 +242,6 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
         description: 'O tamanho que mais usa! Nunca é demais.',
         totalQuantity: 10,
         price: 69.90,
-        storeName: 'Amazon',
         imageUrl: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=600&q=80',
       },
       {
@@ -198,7 +254,6 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
       }
     ],
   },
-
   {
     id: 'cha-bebe-floral',
     category: 'cha-de-bebe',
@@ -234,7 +289,42 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
       }
     ],
   },
+  {
+    id: 'cha-bebe-safari',
+    category: 'cha-de-bebe',
+    name: 'Safári Baby & Tons Neutros',
+    tagline: 'Verde sálvia, bege acolhedor, folhagens e bichinhos da selva',
+    badge: '🦁 Safári & Aventura',
+    fontTitle: 'font-baby',
+    isDarkTheme: false,
+    bgClass: 'bg-[#f5f7f2] text-stone-800',
+    heroPattern: 'safari-baby',
+    primaryColor: '#65a30d',
+    accentGradient: 'from-lime-100 via-amber-50 to-stone-100',
+    cardStyle: 'bg-white/95 border border-lime-200 hover:border-lime-400 shadow-sm hover:shadow-md rounded-3xl',
+    buttonStyle: 'bg-gradient-to-r from-lime-600 to-emerald-600 hover:opacity-95 text-white font-bold rounded-2xl shadow-md shadow-lime-200',
+    heroEmoji: '🦒',
+    sampleGifts: [
+      {
+        title: 'Mochila Maternidade Multifuncional Térmica',
+        category: 'Passeio',
+        description: 'Espaçosa e prática para os passeios do bebê.',
+        totalQuantity: 1,
+        price: 199.00,
+        imageUrl: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80',
+      },
+      {
+        title: 'Jogo de Berço em Algodão Estampa Selva',
+        category: 'Quarto',
+        description: 'Lençóis macios e antialérgicos.',
+        totalQuantity: 2,
+        price: 110.00,
+        imageUrl: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=600&q=80',
+      }
+    ],
+  },
 
+  // ================= CASA NOVA =================
   {
     id: 'casa-nova-moderna',
     category: 'casa-nova',
@@ -269,7 +359,42 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
       }
     ],
   },
+  {
+    id: 'casa-nova-industrial',
+    category: 'casa-nova',
+    name: 'Industrial Loft & Tijolinhos',
+    tagline: 'Tijolo aparente, madeira nobre, metal preto e estética loft urbano',
+    badge: '🧱 Urbano & Loft',
+    fontTitle: 'font-modern',
+    isDarkTheme: false,
+    bgClass: 'bg-[#f8f5f0] text-stone-900',
+    heroPattern: 'industrial-loft',
+    primaryColor: '#9a3412',
+    accentGradient: 'from-stone-200 via-amber-100 to-stone-100',
+    cardStyle: 'bg-white border-2 border-stone-300 hover:border-stone-800 shadow-sm rounded-xl',
+    buttonStyle: 'bg-stone-900 hover:bg-stone-800 text-amber-50 font-bold uppercase rounded-lg',
+    heroEmoji: '🏙️',
+    sampleGifts: [
+      {
+        title: 'Luminária de Mesa Estilo Industrial Articulada',
+        category: 'Iluminação',
+        description: 'Metal preto fosco para mesa ou cabeceira.',
+        totalQuantity: 2,
+        price: 145.00,
+        imageUrl: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80',
+      },
+      {
+        title: 'Quadro Arte Contemporânea Moldura Preta 70x100',
+        category: 'Decoração',
+        description: 'Destaque visual para a parede da sala.',
+        totalQuantity: 1,
+        price: 180.00,
+        imageUrl: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80',
+      }
+    ],
+  },
 
+  // ================= 15 ANOS & GERAL =================
   {
     id: 'festa-glam',
     category: 'geral',
@@ -297,7 +422,37 @@ export const TEMPLATES_LIST: EventTemplateConfig[] = [
       }
     ],
   },
+  {
+    id: 'festa-midnight',
+    category: 'geral',
+    name: 'Noite Estrelada & Constelações',
+    tagline: 'Azul marinho profundo, constelações douradas e misticismo elegante',
+    badge: '🌌 Galáctico & Mágico',
+    fontTitle: 'font-cinzel',
+    isDarkTheme: true,
+    bgClass: 'bg-[#060814] text-slate-100',
+    heroPattern: 'midnight-star',
+    primaryColor: '#38bdf8',
+    accentGradient: 'from-blue-950 via-slate-950 to-indigo-950',
+    cardStyle: 'bg-slate-900/90 border border-sky-500/30 hover:border-sky-400 hover:shadow-xl hover:shadow-sky-500/20 text-white rounded-3xl',
+    buttonStyle: 'bg-gradient-to-r from-sky-500 to-indigo-600 hover:opacity-95 text-white font-bold rounded-2xl shadow-md shadow-sky-500/30',
+    heroEmoji: '✨',
+    sampleGifts: [
+      {
+        title: 'Projetor Galáctico de Estrelas Astronauta',
+        category: 'Quarto',
+        description: 'Transforma o teto em um céu estrelado mágico.',
+        totalQuantity: 1,
+        price: 160.00,
+        imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
+      }
+    ],
+  },
 ];
+
+export function getTemplatesByCategory(category: EventCategory): EventTemplateConfig[] {
+  return TEMPLATES_LIST.filter((t) => t.category === category);
+}
 
 export function getTemplateById(templateId?: string, categoryFallback?: EventCategory): EventTemplateConfig {
   if (templateId) {
@@ -311,11 +466,10 @@ export function getTemplateById(templateId?: string, categoryFallback?: EventCat
   return TEMPLATES_LIST[0];
 }
 
-// Objeto de compatibilidade para código que acessa por nicho
 export const EVENT_TEMPLATES: Record<EventCategory, EventTemplateConfig> = {
   casamento: TEMPLATES_LIST[0],
-  aniversario: TEMPLATES_LIST[2],
-  'cha-de-bebe': TEMPLATES_LIST[4],
-  'casa-nova': TEMPLATES_LIST[6],
-  geral: TEMPLATES_LIST[7],
+  aniversario: TEMPLATES_LIST[3],
+  'cha-de-bebe': TEMPLATES_LIST[6],
+  'casa-nova': TEMPLATES_LIST[9],
+  geral: TEMPLATES_LIST[11],
 };

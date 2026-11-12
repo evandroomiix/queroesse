@@ -133,10 +133,73 @@ export default function ThemeHero({ event, template }: ThemeHeroProps) {
         </div>
       )}
 
-      {/* ================= ESTILO 6: MINIMALISTA ESCANDINAVO / GERAL ================= */}
+      {/* ================= ESTILO 6: SUNSET TROPICAL ================= */}
+      {template.heroPattern === 'sunset-tropical' && (
+        <div className="relative pt-12 pb-10 px-6 sm:px-12 text-center bg-gradient-to-b from-orange-200/90 via-rose-100 to-amber-50 border-b border-orange-200">
+          <span className="inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-orange-500 text-white shadow-md mb-2">
+            🍹 {template.badge}
+          </span>
+          <h1 className={`text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight ${template.fontTitle}`}>
+            {event.title}
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-700 max-w-md mx-auto mt-2 leading-relaxed">
+            {event.description}
+          </p>
+        </div>
+      )}
+
+      {/* ================= ESTILO 7: SAFÁRI BABY ================= */}
+      {template.heroPattern === 'safari-baby' && (
+        <div className="relative pt-12 pb-10 px-6 sm:px-12 text-center bg-[#f5f7f2] border-b border-lime-200">
+          <div className="w-14 h-14 rounded-full bg-lime-100 text-lime-800 text-2xl flex items-center justify-center mx-auto mb-2 border border-lime-300">
+            🦁
+          </div>
+          <span className="text-xs font-bold uppercase tracking-wider text-lime-800 block mb-1">
+            {template.badge}
+          </span>
+          <h1 className={`text-3xl sm:text-5xl font-extrabold text-stone-900 tracking-tight ${template.fontTitle}`}>
+            {event.title}
+          </h1>
+          <p className="text-xs sm:text-sm text-stone-600 max-w-md mx-auto mt-2 leading-relaxed">
+            {event.description}
+          </p>
+        </div>
+      )}
+
+      {/* ================= ESTILO 8: INDUSTRIAL LOFT ================= */}
+      {template.heroPattern === 'industrial-loft' && (
+        <div className="relative pt-10 pb-8 px-6 sm:px-10 text-center bg-[#f8f5f0] border-b-2 border-stone-800">
+          <span className="inline-block px-3 py-0.5 rounded-none text-xs font-black uppercase tracking-widest bg-stone-900 text-amber-50 mb-2">
+            {template.badge}
+          </span>
+          <h1 className={`text-3xl sm:text-5xl font-black text-stone-900 uppercase tracking-tight ${template.fontTitle}`}>
+            {event.title}
+          </h1>
+          <p className="text-xs sm:text-sm text-stone-700 max-w-md mx-auto mt-2 font-medium">
+            {event.description}
+          </p>
+        </div>
+      )}
+
+      {/* ================= ESTILO 9: MIDNIGHT STAR (DARK) ================= */}
+      {template.heroPattern === 'midnight-star' && (
+        <div className="relative pt-12 pb-10 px-6 sm:px-12 text-center bg-gradient-to-b from-[#0a0d24] via-[#060814] to-[#060814] border-b border-sky-500/30">
+          <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-sky-500/20 text-sky-300 border border-sky-400/40 mb-3 shadow-[0_0_15px_rgba(56,189,248,0.3)]">
+            🌌 {template.badge}
+          </span>
+          <h1 className={`text-3xl sm:text-5xl font-black text-white drop-shadow-[0_0_20px_rgba(56,189,248,0.5)] ${template.fontTitle}`}>
+            {event.title}
+          </h1>
+          <p className="mt-2 text-xs sm:text-sm text-sky-200/80 max-w-md mx-auto leading-relaxed">
+            {event.description}
+          </p>
+        </div>
+      )}
+
+      {/* ================= ESTILO 10: MINIMALISTA / GLAM ================= */}
       {(template.heroPattern === 'minimal-grid' || template.heroPattern === 'glam-sparkles') && (
         <div className="relative pt-10 pb-8 px-6 sm:px-10 text-center bg-white border-b border-slate-100">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-emerald-700 block mb-2">
+          <span className="text-xs font-extrabold uppercase tracking-widest text-pink-600 block mb-2">
             {template.badge}
           </span>
 

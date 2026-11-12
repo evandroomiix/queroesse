@@ -35,12 +35,17 @@ export interface GiftItem {
 export type TemplateId =
   | 'casamento-classico'
   | 'casamento-boho'
+  | 'casamento-minimal'
   | 'aniversario-neon'
   | 'aniversario-boteco'
+  | 'aniversario-sunset'
   | 'cha-bebe-nuvem'
   | 'cha-bebe-floral'
+  | 'cha-bebe-safari'
   | 'casa-nova-moderna'
-  | 'festa-glam';
+  | 'casa-nova-industrial'
+  | 'festa-glam'
+  | 'festa-midnight';
 
 export interface EventTemplateConfig {
   id: TemplateId;
