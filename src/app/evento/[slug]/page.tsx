@@ -9,7 +9,8 @@ import GuestBar from '@/components/GuestBar';
 import GiftCard from '@/components/GiftCard';
 import ReserveModal from '@/components/ReserveModal';
 import ShareModal from '@/components/ShareModal';
-import { getEventBySlug, reserveGift } from '@/lib/storage';
+import { getEventBySlug, reserveGift, syncEventFromCloud } from '@/lib/storage';
+import { supabase } from '@/lib/supabase';
 import { EVENT_TEMPLATES } from '@/lib/templates';
 import { EventData, GiftItem } from '@/types';
 import {
@@ -50,17 +51,49 @@ function EventContent({ params }: EventPageProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const loadData = () => {
-    const data = getEventBySlug(resolvedParams.slug);
-    setEvent(data);
+  const loadData = async () => {
+    // 1. Tenta carregar do cache local imediatamente para a tela abrir sem atraso
+    const localData = getEventBySlug(resolvedParams.slug);
+    if (localData) {
+      setEvent(localData);
+      setLoading(false);
+    }
+
+    // 2. Busca na nuvem (Supabase) para ter os dados mais recentes de outros convidados
+    const cloudData = await syncEventFromCloud(resolvedParams.slug);
+    if (cloudData) {
+      setEvent(cloudData);
+    }
     setLoading(false);
   };
 
   useEffect(() => {
     loadData();
-    const handleUpdate = () => loadData();
+    const handleUpdate = () => {
+      const data = getEventBySlug(resolvedParams.slug);
+      if (data) setEvent(data);
+    };
+
     window.addEventListener('queroesse_storage_updated', handleUpdate);
-    return () => window.removeEventListener('queroesse_storage_updated', handleUpdate);
+
+    // Conexão em tempo real via Supabase: atualiza automaticamente se outro convidado reservar
+    const channel = supabase
+      .channel(`realtime-event-${resolvedParams.slug}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'events', filter: `slug=eq.${resolvedParams.slug}` },
+        (payload: any) => {
+          if (payload.new && payload.new.data) {
+            setEvent(payload.new.data);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('queroesse_storage_updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
   }, [resolvedParams.slug]);
 
   if (loading) {
@@ -104,14 +137,14 @@ function EventContent({ params }: EventPageProps) {
     setIsReserveModalOpen(true);
   };
 
-  const handleConfirmReservation = (reservationData: {
+  const handleConfirmReservation = async (reservationData: {
     guestName: string;
     guestPhone?: string;
     message?: string;
     quantity: number;
   }) => {
     if (!selectedGift) return false;
-    const res = reserveGift(event.slug, selectedGift.id, reservationData);
+    const res = await reserveGift(event.slug, selectedGift.id, reservationData);
     if (res.success) {
       setActiveGuestName(reservationData.guestName);
       loadData();

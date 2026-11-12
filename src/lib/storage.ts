@@ -2,6 +2,7 @@
 
 import { EventData, GiftItem, GiftReservation } from '@/types';
 import { EVENT_TEMPLATES } from './templates';
+import { supabase } from './supabase';
 
 const STORAGE_KEY = 'queroesse_events_v1';
 const USER_KEY = 'queroesse_current_user_v1';
@@ -19,7 +20,7 @@ export const INITIAL_EVENTS: EventData[] = [
     location: 'Espaço Villa das Flores - Curitiba, PR',
     description: 'Queridos amigos e familiares! Criamos essa lista com muito carinho para compartilhar nosso sonho com vocês. Fiquem à vontade para escolher o mimo que mais toca o coração.',
     coverImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80',
-    guestMode: 'predefined', // Demonstração do modo lista fechada!
+    guestMode: 'predefined',
     predefinedGuests: [
       { id: 'g1', name: 'Ana Carolina Mendonça', reservedCount: 1 },
       { id: 'g2', name: 'Carlos Eduardo & Família', reservedCount: 0 },
@@ -120,7 +121,7 @@ export const INITIAL_EVENTS: EventData[] = [
     location: 'Rooftop Bar & Grill - São Paulo, SP',
     description: 'Cheguei nos 30! Preparem o fígado e a animação. Se quiserem me presentear com algo, essa listinha reúne itens que estou doido para ter ou rodadas de chopp!',
     coverImage: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80',
-    guestMode: 'open', // Demonstração do modo aberto!
+    guestMode: 'open',
     predefinedGuests: [],
     gifts: [
       {
@@ -188,7 +189,26 @@ export function getEventBySlug(slug: string): EventData | null {
   return events.find((e) => e.slug === slug || e.id === slug) || null;
 }
 
-export function saveEvent(event: EventData): void {
+// Sincronização em nuvem com Supabase
+export async function syncEventFromCloud(slug: string): Promise<EventData | null> {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('data')
+      .eq('slug', slug)
+      .maybeSingle();
+
+    if (!error && data?.data) {
+      saveEventLocal(data.data, false);
+      return data.data as EventData;
+    }
+  } catch (err) {
+    console.warn('Supabase sync info:', err);
+  }
+  return getEventBySlug(slug);
+}
+
+function saveEventLocal(event: EventData, triggerCloudSync = true): void {
   if (typeof window === 'undefined') return;
   const events = getEvents();
   const existingIdx = events.findIndex((e) => e.id === event.id || e.slug === event.slug);
@@ -198,15 +218,41 @@ export function saveEvent(event: EventData): void {
     events.unshift(event);
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
-  // Dispara evento para sincronizar tabs ou componentes
   window.dispatchEvent(new Event('queroesse_storage_updated'));
+
+  if (triggerCloudSync) {
+    // Salva assincronamente no Supabase
+    (async () => {
+      try {
+        const { error } = await supabase.from('events').upsert(
+          {
+            id: event.id,
+            slug: event.slug,
+            data: event,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'slug' }
+        );
+        if (error) console.warn('Supabase upsert warning:', error.message);
+      } catch (err) {
+        console.warn('Supabase save error:', err);
+      }
+    })();
+  }
 }
 
-export function reserveGift(
+export function saveEvent(event: EventData): void {
+  saveEventLocal(event, true);
+}
+
+export async function reserveGift(
   slug: string,
   giftId: string,
   reservationData: { guestName: string; guestPhone?: string; message?: string; quantity: number }
-): { success: boolean; message?: string } {
+): Promise<{ success: boolean; message?: string }> {
+  // 1. Tenta atualizar do Supabase primeiro para garantir dados mais recentes
+  await syncEventFromCloud(slug);
+
   const events = getEvents();
   const eventIdx = events.findIndex((e) => e.slug === slug || e.id === slug);
   if (eventIdx === -1) return { success: false, message: 'Evento não encontrado.' };
@@ -234,7 +280,6 @@ export function reserveGift(
 
   gift.reservations.push(newReservation);
 
-  // Se o evento estiver no modo lista fechada, atualiza contagem do convidado
   if (event.guestMode === 'predefined') {
     const guest = event.predefinedGuests.find(
       (g) => g.name.toLowerCase() === reservationData.guestName.trim().toLowerCase()
@@ -245,8 +290,7 @@ export function reserveGift(
   }
 
   events[eventIdx] = event;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
-  window.dispatchEvent(new Event('queroesse_storage_updated'));
+  saveEvent(event);
 
   return { success: true };
 }
@@ -311,6 +355,25 @@ export function getCurrentUser() {
   }
 }
 
+export async function loginWithGoogleAuth() {
+  if (typeof window === 'undefined') return;
+  // Chama OAuth do Supabase oficial
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+    if (error) {
+      console.warn('OAuth fallback:', error.message);
+      loginWithGoogle();
+    }
+  } catch {
+    loginWithGoogle();
+  }
+}
+
 export function loginWithGoogle(mockName = 'Usuário QueroEsse', mockEmail = 'organizador@gmail.com') {
   if (typeof window === 'undefined') return null;
   const user = {
@@ -325,8 +388,11 @@ export function loginWithGoogle(mockName = 'Usuário QueroEsse', mockEmail = 'or
   return user;
 }
 
-export function logout() {
+export async function logout() {
   if (typeof window === 'undefined') return;
+  try {
+    await supabase.auth.signOut();
+  } catch {}
   localStorage.removeItem(USER_KEY);
   window.dispatchEvent(new Event('queroesse_auth_updated'));
 }

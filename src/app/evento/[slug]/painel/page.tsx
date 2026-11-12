@@ -7,7 +7,15 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ShareModal from '@/components/ShareModal';
 import ImagePicker from '@/components/ImagePicker';
-import { getEventBySlug, saveEvent, addGiftToEvent, removeGiftFromEvent, cancelReservation } from '@/lib/storage';
+import {
+  getEventBySlug,
+  saveEvent,
+  addGiftToEvent,
+  removeGiftFromEvent,
+  cancelReservation,
+  syncEventFromCloud,
+} from '@/lib/storage';
+import { supabase } from '@/lib/supabase';
 import { EventData, GiftItem, Guest } from '@/types';
 import {
   Gift,
@@ -50,16 +58,40 @@ function HostPanelContent({ params }: PanelPageProps) {
   // Estado para adicionar novo convidado
   const [newGuestName, setNewGuestName] = useState('');
 
-  const loadData = () => {
-    const data = getEventBySlug(resolvedParams.slug);
-    setEvent(data);
+  const loadData = async () => {
+    const local = getEventBySlug(resolvedParams.slug);
+    if (local) setEvent(local);
+
+    const cloud = await syncEventFromCloud(resolvedParams.slug);
+    if (cloud) setEvent(cloud);
   };
 
   useEffect(() => {
     loadData();
-    const handleUpdate = () => loadData();
+    const handleUpdate = () => {
+      const data = getEventBySlug(resolvedParams.slug);
+      if (data) setEvent(data);
+    };
+
     window.addEventListener('queroesse_storage_updated', handleUpdate);
-    return () => window.removeEventListener('queroesse_storage_updated', handleUpdate);
+
+    const channel = supabase
+      .channel(`realtime-panel-${resolvedParams.slug}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'events', filter: `slug=eq.${resolvedParams.slug}` },
+        (payload: any) => {
+          if (payload.new && payload.new.data) {
+            setEvent(payload.new.data);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('queroesse_storage_updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
   }, [resolvedParams.slug]);
 
   if (!event) {
