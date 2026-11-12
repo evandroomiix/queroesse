@@ -5,9 +5,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ImagePicker from '@/components/ImagePicker';
-import { EVENT_TEMPLATES } from '@/lib/templates';
+import TemplateGalleryPicker from '@/components/TemplateGalleryPicker';
+import { EVENT_TEMPLATES, TEMPLATES_LIST, getTemplateById } from '@/lib/templates';
 import { saveEvent } from '@/lib/storage';
-import { EventCategory, EventData, GiftItem, GuestMode, Guest } from '@/types';
+import { EventCategory, EventData, GiftItem, GuestMode, Guest, TemplateId } from '@/types';
 import {
   Gift,
   Sparkles,
@@ -34,6 +35,15 @@ function CreateEventContent() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Passo 1: Informações do Evento
+  const [templateId, setTemplateId] = useState<TemplateId>(
+    initialNicho === 'aniversario'
+      ? 'aniversario-neon'
+      : initialNicho === 'cha-de-bebe'
+      ? 'cha-bebe-nuvem'
+      : initialNicho === 'casa-nova'
+      ? 'casa-nova-moderna'
+      : 'casamento-classico'
+  );
   const [category, setCategory] = useState<EventCategory>(initialNicho);
   const [title, setTitle] = useState('');
   const [hostName, setHostName] = useState('');
@@ -68,7 +78,7 @@ function CreateEventContent() {
 
   // Importar sugestões do nicho
   const handleImportTemplateSuggestions = () => {
-    const template = EVENT_TEMPLATES[category];
+    const template = getTemplateById(templateId, category);
     const importedGifts: GiftItem[] = template.sampleGifts.map((sample, idx) => ({
       ...sample,
       id: `imported-${Date.now()}-${idx}`,
@@ -146,6 +156,7 @@ function CreateEventContent() {
       title: title.trim(),
       hostName: hostName.trim() || 'Anfitrião',
       category,
+      templateId,
       date: date || new Date().toISOString().split('T')[0],
       time: time || undefined,
       location: location || undefined,
@@ -153,7 +164,7 @@ function CreateEventContent() {
       coverImage: coverImage || undefined,
       guestMode,
       predefinedGuests: parsedGuests,
-      gifts: gifts.length > 0 ? gifts : EVENT_TEMPLATES[category].sampleGifts.map((s, idx) => ({
+      gifts: gifts.length > 0 ? gifts : getTemplateById(templateId, category).sampleGifts.map((s, idx) => ({
         ...s,
         id: `default-${idx}`,
         reservations: [],
@@ -203,35 +214,15 @@ function CreateEventContent() {
               </p>
             </div>
 
-            {/* Nichos / Templates */}
+            {/* Seletor de Templates Exclusivos */}
             <div className="mb-8">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
-                Selecione o Tipo de Evento / Nicho:
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {(Object.keys(EVENT_TEMPLATES) as EventCategory[]).map((cat) => {
-                  const tmpl = EVENT_TEMPLATES[cat];
-                  const isSelected = category === cat;
-                  return (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setCategory(cat)}
-                      className={`p-4 rounded-2xl border text-left flex flex-col justify-between transition-all ${
-                        isSelected
-                          ? 'border-rose-500 bg-rose-50/50 ring-2 ring-rose-500/20 shadow-xs'
-                          : 'border-slate-200 hover:border-slate-300 bg-white'
-                      }`}
-                    >
-                      <span className="text-2xl mb-2">{tmpl.heroEmoji}</span>
-                      <div>
-                        <p className="text-xs font-bold text-slate-900">{tmpl.name.split('/')[0]}</p>
-                        <p className="text-[10px] text-slate-500 line-clamp-1">{tmpl.badge}</p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              <TemplateGalleryPicker
+                selectedId={templateId}
+                onSelect={(tmpl) => {
+                  setTemplateId(tmpl.id);
+                  setCategory(tmpl.category);
+                }}
+              />
             </div>
 
             {/* Campos do Formulário */}

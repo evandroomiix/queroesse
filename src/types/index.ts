@@ -32,15 +32,31 @@ export interface GiftItem {
   isLocked?: boolean;
 }
 
+export type TemplateId =
+  | 'casamento-classico'
+  | 'casamento-boho'
+  | 'aniversario-neon'
+  | 'aniversario-boteco'
+  | 'cha-bebe-nuvem'
+  | 'cha-bebe-floral'
+  | 'casa-nova-moderna'
+  | 'festa-glam';
+
 export interface EventTemplateConfig {
-  id: EventCategory;
+  id: TemplateId;
+  category: EventCategory;
   name: string;
   tagline: string;
   badge: string;
-  primaryColor: string; // Ex: rose-gold, emerald, violet, amber
+  fontTitle: string; // ex: 'font-serif-wedding', 'font-neon', 'font-baby', etc.
+  fontAccent?: string; // ex: 'font-script'
+  isDarkTheme?: boolean;
+  bgClass: string;
+  heroPattern: string; // 'monogram' | 'boho-arch' | 'neon-glow' | 'cloud-stars' | 'boteco-chalk' | 'minimal-grid' | 'glam-sparkles'
+  primaryColor: string;
   accentGradient: string;
-  bgGradient: string;
   cardStyle: string;
+  buttonStyle: string;
   heroEmoji: string;
   sampleGifts: Array<Omit<GiftItem, 'id' | 'reservations'>>;
 }
@@ -52,6 +68,7 @@ export interface EventData {
   hostName: string;
   hostEmail?: string;
   category: EventCategory;
+  templateId?: TemplateId;
   date: string;
   time?: string;
   location?: string;

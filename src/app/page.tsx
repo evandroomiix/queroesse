@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { EVENT_TEMPLATES } from '@/lib/templates';
-import { EventCategory } from '@/types';
+import { TEMPLATES_LIST, getTemplateById } from '@/lib/templates';
+import { TemplateId } from '@/types';
 import {
   Gift,
   Heart,
@@ -23,8 +23,8 @@ import {
 } from 'lucide-react';
 
 export default function HomePage() {
-  const [selectedCategory, setSelectedCategory] = useState<EventCategory>('casamento');
-  const currentTemplate = EVENT_TEMPLATES[selectedCategory];
+  const [selectedTemplateId, setSelectedTemplateId] = useState<TemplateId>('casamento-classico');
+  const currentTemplate = TEMPLATES_LIST.find((t) => t.id === selectedTemplateId) || TEMPLATES_LIST[0];
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-rose-500 selection:text-white">
@@ -106,56 +106,55 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Abas dos Nichos */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-12">
-            {(Object.keys(EVENT_TEMPLATES) as EventCategory[]).map((cat) => {
-              const tmpl = EVENT_TEMPLATES[cat];
-              const isSelected = selectedCategory === cat;
+          {/* Abas dos 8 Templates */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-10">
+            {TEMPLATES_LIST.map((tmpl) => {
+              const isSelected = selectedTemplateId === tmpl.id;
               return (
                 <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
+                  key={tmpl.id}
+                  onClick={() => setSelectedTemplateId(tmpl.id)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
                     isSelected
-                      ? 'bg-slate-900 text-white shadow-md scale-102'
+                      ? 'bg-rose-600 text-white shadow-md shadow-rose-200 scale-102 ring-2 ring-rose-400'
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                   }`}
                 >
                   <span className="text-base">{tmpl.heroEmoji}</span>
-                  <span>{tmpl.name.split('/')[0]}</span>
+                  <span>{tmpl.name.split('&')[0]}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Preview do Template Selecionado */}
-          <div className={`rounded-3xl p-6 sm:p-10 border ${currentTemplate.cardStyle} transition-all duration-300`}>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-200/80">
+          {/* Preview do Template Selecionado com a estética real */}
+          <div className={`rounded-3xl p-6 sm:p-10 border transition-all duration-300 ${currentTemplate.cardStyle}`}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-200/40">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
+                <span className="text-xs font-bold uppercase tracking-wider text-rose-500">
                   {currentTemplate.badge}
                 </span>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+                <h3 className={`text-3xl sm:text-4xl font-extrabold mt-1 leading-tight ${currentTemplate.fontTitle} ${currentTemplate.isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
                   {currentTemplate.name}
                 </h3>
-                <p className="text-slate-600 text-sm mt-1 max-w-xl">
+                <p className={`text-sm mt-1 max-w-xl ${currentTemplate.isDarkTheme ? 'text-slate-300' : 'text-slate-600'}`}>
                   {currentTemplate.tagline}
                 </p>
               </div>
 
               <Link
-                href={`/criar?nicho=${selectedCategory}`}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider shrink-0 transition-transform hover:scale-102"
+                href={`/criar?nicho=${currentTemplate.category}`}
+                className={`inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider shrink-0 transition-transform hover:scale-102 ${currentTemplate.buttonStyle}`}
               >
-                <span>Usar este Template</span>
+                <span>Criar com este Template</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
             {/* Grid de Exemplos de Presentes para este nicho */}
             <div className="mt-8">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-                Sugestões inteligentes prontas para este nicho:
+              <p className={`text-xs font-bold uppercase tracking-wider mb-4 ${currentTemplate.isDarkTheme ? 'text-purple-300' : 'text-slate-400'}`}>
+                Sugestões de presentes ideais para esta celebração:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {currentTemplate.sampleGifts.slice(0, 4).map((gift, idx) => (
