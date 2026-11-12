@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ShareModal from '@/components/ShareModal';
+import ImagePicker from '@/components/ImagePicker';
 import { getEventBySlug, saveEvent, addGiftToEvent, removeGiftFromEvent, cancelReservation } from '@/lib/storage';
 import { EventData, GiftItem, Guest } from '@/types';
 import {
@@ -369,6 +370,14 @@ function HostPanelContent({ params }: PanelPageProps) {
                     className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-rose-500"
                   />
                 </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    Foto do Produto
+                  </label>
+                  <ImagePicker value={newImage} onChange={setNewImage} productName={newTitle} />
+                </div>
+
                 <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="button"

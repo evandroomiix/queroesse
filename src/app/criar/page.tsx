@@ -4,6 +4,7 @@ import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ImagePicker from '@/components/ImagePicker';
 import { EVENT_TEMPLATES } from '@/lib/templates';
 import { saveEvent } from '@/lib/storage';
 import { EventCategory, EventData, GiftItem, GuestMode, Guest } from '@/types';
@@ -607,18 +608,18 @@ function CreateEventContent() {
                     />
                   </div>
 
+                <div className="grid grid-cols-1 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                      Foto do Produto (URL Opcional)
+                      Foto do Produto (Envie do seu celular ou busque na internet)
                     </label>
-                    <input
-                      type="url"
-                      placeholder="https://..."
+                    <ImagePicker
                       value={newGiftImage}
-                      onChange={(e) => setNewGiftImage(e.target.value)}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                      onChange={setNewGiftImage}
+                      productName={newGiftTitle}
                     />
                   </div>
+                </div>
                 </div>
 
                 <div className="flex justify-end pt-2">
