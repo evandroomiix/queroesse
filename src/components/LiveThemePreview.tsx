@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { EventCategory, EventTemplateConfig, TemplateId } from '@/types';
@@ -12,11 +12,14 @@ interface LiveThemePreviewProps {
 }
 
 const NICHO_TABS: Array<{ id: EventCategory; label: string; emoji: string }> = [
-  { id: 'casamento', label: 'Casamento', emoji: '💍' },
-  { id: 'aniversario', label: 'Aniversário & Festas', emoji: '🎂' },
-  { id: 'cha-de-bebe', label: 'Chá de Bebê', emoji: '🍼' },
+  { id: 'casamento', label: 'Casamento & Noivado', emoji: '💍' },
+  { id: '15-anos', label: '15 Anos & Debutante', emoji: '👑' },
+  { id: 'cha-de-bebe', label: 'Chá de Bebê & Revelação', emoji: '🍼' },
+  { id: 'aniversario', label: 'Aniversário Adulto', emoji: '🎂' },
+  { id: 'aniversario-infantil', label: 'Aniversário Infantil', emoji: '🎈' },
+  { id: 'cha-de-panela', label: 'Chá de Panela & Cozinha', emoji: '🍳' },
   { id: 'casa-nova', label: 'Casa Nova & Open House', emoji: '🏡' },
-  { id: 'geral', label: '15 Anos & Celebrações', emoji: '✨' },
+  { id: 'formatura', label: 'Formatura & Celebrações', emoji: '🎓' },
 ];
 
 export default function LiveThemePreview({
@@ -144,7 +147,7 @@ export default function LiveThemePreview({
         </div>
 
         {/* COLUNA DIREITA: PREVIEW AO VIVO EM TEMPO REAL (7 COLUNAS) */}
-        <div className="lg:col-span-7 bg-slate-100 rounded-3xl p-4 sm:p-6 border border-slate-200/80">
+        <div className="lg:col-span-7 bg-slate-100 rounded-3xl p-4 sm:p-6 border border-slate-200/80 sticky top-24">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
@@ -198,7 +201,7 @@ export default function LiveThemePreview({
             )}
 
             {/* TELA INTERNA DO SITE COM O TEMPLATE APLICADO */}
-            <div className={`p-4 transition-colors duration-500 ${currentTemplate.bgClass} max-h-[460px] overflow-y-auto space-y-4`}>
+            <div className={`p-4 transition-colors duration-500 ${currentTemplate.bgClass} max-h-[480px] overflow-y-auto space-y-4`}>
               {/* Mini Cabeçalho Estilizado */}
               <div
                 className={`p-5 rounded-2xl border text-center transition-all ${
@@ -206,10 +209,24 @@ export default function LiveThemePreview({
                     ? 'bg-[#12072b] border-purple-500/40 text-white'
                     : currentTemplate.heroPattern === 'monogram'
                     ? 'bg-[#faf6ee] border-amber-300 text-stone-900'
+                    : currentTemplate.heroPattern === 'rose-gold'
+                    ? 'bg-[#fff0f3] border-rose-300 text-rose-950'
+                    : currentTemplate.heroPattern === 'pink-party'
+                    ? 'bg-gradient-to-b from-pink-200 via-rose-100 to-white border-pink-400 text-pink-700'
+                    : currentTemplate.heroPattern === 'vintage-floral'
+                    ? 'bg-[#fffbf9] border-rose-200 text-rose-950'
+                    : currentTemplate.heroPattern === 'revelacao'
+                    ? 'bg-gradient-to-r from-pink-100 via-white to-sky-100 border-purple-200 text-slate-800'
+                    : currentTemplate.heroPattern === 'jardim-luzes'
+                    ? 'bg-gradient-to-b from-[#f2f8f2] to-white border-emerald-200 text-emerald-950'
                     : currentTemplate.heroPattern === 'boho-arch'
                     ? 'bg-[#faf3ec] border-orange-200 text-amber-950'
                     : currentTemplate.heroPattern === 'cloud-stars'
                     ? 'bg-gradient-to-b from-sky-100 to-white border-sky-200 text-slate-800'
+                    : currentTemplate.heroPattern === 'sunset-tropical'
+                    ? 'bg-gradient-to-b from-orange-200/90 via-rose-100 to-amber-50 border-orange-200 text-slate-900'
+                    : currentTemplate.heroPattern === 'midnight-star'
+                    ? 'bg-[#0a0d24] border-sky-500/30 text-white'
                     : 'bg-white border-slate-200 text-slate-900'
                 }`}
               >
@@ -217,6 +234,18 @@ export default function LiveThemePreview({
                 {currentTemplate.heroPattern === 'monogram' && (
                   <div className="w-12 h-12 rounded-full border border-amber-400 mx-auto mb-2 flex items-center justify-center font-serif text-amber-800 text-xs font-bold bg-white">
                     M & L
+                  </div>
+                )}
+                {currentTemplate.heroPattern === 'rose-gold' && (
+                  <div className="w-12 h-12 rounded-full border border-rose-300 mx-auto mb-2 flex items-center justify-center text-rose-500 bg-white">
+                    <Sparkles className="w-5 h-5 animate-pulse" />
+                  </div>
+                )}
+                {currentTemplate.heroPattern === 'revelacao' && (
+                  <div className="flex items-center justify-center gap-2 mb-2 text-[10px] font-black">
+                    <span className="px-2 py-0.5 rounded-full bg-pink-500 text-white">Menina?</span>
+                    <span className="text-purple-600 font-bold">OU</span>
+                    <span className="px-2 py-0.5 rounded-full bg-sky-500 text-white">Menino?</span>
                   </div>
                 )}
 
@@ -227,10 +256,18 @@ export default function LiveThemePreview({
                 <h3 className={`text-xl sm:text-2xl font-black leading-tight ${currentTemplate.fontTitle}`}>
                   {currentTemplate.category === 'casamento'
                     ? 'Mariana & Leonardo'
+                    : currentTemplate.category === '15-anos'
+                    ? '15 Anos da Isadora'
                     : currentTemplate.category === 'cha-de-bebe'
                     ? 'Chá da Alice'
+                    : currentTemplate.category === 'aniversario-infantil'
+                    ? '1º Aninho da Helena'
+                    : currentTemplate.category === 'cha-de-panela'
+                    ? 'Chá de Panela da Luísa'
                     : currentTemplate.category === 'casa-nova'
-                    ? 'Open House da Ana'
+                    ? 'Open House da Ana & Lucas'
+                    : currentTemplate.category === 'formatura'
+                    ? 'Formatura da Dra. Camila'
                     : 'Pedro Faz 30 Anos!'}
                 </h3>
 

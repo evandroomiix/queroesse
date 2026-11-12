@@ -1,4 +1,13 @@
-export type EventCategory = 'casamento' | 'aniversario' | 'cha-de-bebe' | 'casa-nova' | 'geral';
+export type EventCategory =
+  | 'casamento'
+  | '15-anos'
+  | 'cha-de-bebe'
+  | 'aniversario'
+  | 'aniversario-infantil'
+  | 'cha-de-panela'
+  | 'casa-nova'
+  | 'formatura'
+  | 'geral';
 
 export type GuestMode = 'open' | 'predefined'; // 'open': convidado digita o nome; 'predefined': escolhe da lista de convidados pré-cadastrados
 
@@ -32,20 +41,7 @@ export interface GiftItem {
   isLocked?: boolean;
 }
 
-export type TemplateId =
-  | 'casamento-classico'
-  | 'casamento-boho'
-  | 'casamento-minimal'
-  | 'aniversario-neon'
-  | 'aniversario-boteco'
-  | 'aniversario-sunset'
-  | 'cha-bebe-nuvem'
-  | 'cha-bebe-floral'
-  | 'cha-bebe-safari'
-  | 'casa-nova-moderna'
-  | 'casa-nova-industrial'
-  | 'festa-glam'
-  | 'festa-midnight';
+export type TemplateId = string;
 
 export interface EventTemplateConfig {
   id: TemplateId;
@@ -57,7 +53,7 @@ export interface EventTemplateConfig {
   fontAccent?: string; // ex: 'font-script'
   isDarkTheme?: boolean;
   bgClass: string;
-  heroPattern: string; // 'monogram' | 'boho-arch' | 'neon-glow' | 'cloud-stars' | 'boteco-chalk' | 'minimal-grid' | 'glam-sparkles'
+  heroPattern: string;
   primaryColor: string;
   accentGradient: string;
   cardStyle: string;
